@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS Admin Dashboard</title>
+    <title>Churches | CMS Admin</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* All the same CSS as in dashboard.html */
         :root {
             --primary: #4a6fa5;
             --secondary: #166088;
@@ -257,10 +258,10 @@
                 <h2><i class="fas fa-church"></i> CMS Admin</h2>
             </div>
             <div class="sidebar-menu">
-                <a href="index.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="churches.html"><i class="fas fa-church"></i> Churches</a>
+                <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="churches.html" class="active"><i class="fas fa-church"></i> Churches</a>
                 <a href="users.html"><i class="fas fa-users"></i> Users</a>
-                <a href="#"><i class="fas fa-envelope"></i> Messages <span class="notification-badge">3</span></a>
+                <a href="#"><i class="fas fa-envelope"></i> Messages</a>
                 <a href="#"><i class="fas fa-cog"></i> Settings</a>
                 <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
@@ -269,7 +270,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1>Dashboard Overview</h1>
+                <h1>Church Management</h1>
                 <div class="user-info">
                     <span>Admin User</span>
                     <div style="position: relative;">
@@ -278,138 +279,176 @@
                 </div>
             </div>
             
-            <!-- Stats Cards -->
-            <div class="card-row">
-                <div class="card">
-                    <h3>Total Churches</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: var(--primary);">142</p>
-                    <p style="color: #6c757d; font-size: 14px;"><i class="fas fa-arrow-up" style="color: var(--success);"></i> 12% from last month</p>
-                </div>
-                <div class="card">
-                    <h3>Verified Churches</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: var(--success);">98</p>
-                    <p style="color: #6c757d; font-size: 14px;">69% of total</p>
-                </div>
-                <div class="card">
-                    <h3>Pending Verification</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: var(--warning);">44</p>
-                    <p style="color: #6c757d; font-size: 14px;"><i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> 12 awaiting action</p>
-                </div>
-                <div class="card">
-                    <h3>Active Users</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: var(--secondary);">256</p>
-                    <p style="color: #6c757d; font-size: 14px;"><i class="fas fa-user-clock" style="color: var(--primary);"></i> 42 active today</p>
+            <!-- Filter Options -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="status-filter">Status</label>
+                        <select id="status-filter" class="form-control">
+                            <option value="all">All Churches</option>
+                            <option value="verified">Verified Only</option>
+                            <option value="pending">Pending Only</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="denomination-filter">Denomination</label>
+                        <select id="denomination-filter" class="form-control">
+                            <option value="all">All Denominations</option>
+                            <option value="pentecostal">Pentecostal</option>
+                            <option value="baptist">Baptist</option>
+                            <option value="methodist">Methodist</option>
+                            <option value="anglican">Anglican</option>
+                            <option value="catholic">Catholic</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="date-filter">Registered Date</label>
+                        <select id="date-filter" class="form-control">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <div style="flex: 2; min-width: 300px;">
+                        <label for="search">Search Churches</label>
+                        <div class="search-bar">
+                            <input type="text" id="search" placeholder="Search by name, location...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Recent Activity -->
+            <!-- Church List -->
             <div class="card">
-                <h3>Recent Church Registrations</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0;">All Registered Churches</h3>
+                    <div>
+                        <button class="btn btn-primary" style="margin-right: 10px;">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Church
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
+                                <th>Church ID</th>
                                 <th>Church Name</th>
                                 <th>Location</th>
+                                <th>Denomination</th>
                                 <th>Contact</th>
-                                <th>Email</th>
+                                <th>Registration Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td>CH-1001</td>
                                 <td>Grace Community Church</td>
-                                <td>Accra, Ghana</td>
+                                <td>Accra Central</td>
+                                <td>Pentecostal</td>
                                 <td>+233 24 123 4567</td>
-                                <td>grace@example.com</td>
+                                <td>15 Jan 2023</td>
                                 <td><span class="status-badge status-verified">Verified</span></td>
                                 <td>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
                                     <button class="btn btn-success btn-sm send-key" data-phone="+233241234567">
-                                        <i class="fas fa-key"></i> Send Key
+                                        <i class="fas fa-key"></i> Key
                                     </button>
                                 </td>
                             </tr>
                             <tr>
+                                <td>CH-1002</td>
                                 <td>New Life Fellowship</td>
-                                <td>Kumasi, Ghana</td>
+                                <td>Kumasi</td>
+                                <td>Baptist</td>
                                 <td>+233 54 987 6543</td>
-                                <td>newlife@example.com</td>
+                                <td>22 Feb 2023</td>
                                 <td><span class="status-badge status-pending">Pending</span></td>
                                 <td>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
                                     <button class="btn btn-success btn-sm send-key" data-phone="+233549876543">
-                                        <i class="fas fa-key"></i> Send Key
+                                        <i class="fas fa-key"></i> Key
                                     </button>
                                 </td>
                             </tr>
                             <tr>
+                                <td>CH-1003</td>
                                 <td>Holy Trinity Cathedral</td>
                                 <td>Cape Coast</td>
+                                <td>Anglican</td>
                                 <td>+233 20 555 1234</td>
-                                <td>holytrinity@example.com</td>
+                                <td>05 Mar 2023</td>
                                 <td><span class="status-badge status-verified">Verified</span></td>
                                 <td>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
                                     <button class="btn btn-success btn-sm send-key" data-phone="+233205551234">
-                                        <i class="fas fa-key"></i> Send Key
+                                        <i class="fas fa-key"></i> Key
                                     </button>
                                 </td>
                             </tr>
                             <tr>
+                                <td>CH-1004</td>
                                 <td>Redeemed Gospel Church</td>
                                 <td>Tema</td>
+                                <td>Pentecostal</td>
                                 <td>+233 27 888 4567</td>
-                                <td>redeemed@example.com</td>
+                                <td>18 Mar 2023</td>
                                 <td><span class="status-badge status-pending">Pending</span></td>
                                 <td>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
                                     <button class="btn btn-success btn-sm send-key" data-phone="+233278884567">
-                                        <i class="fas fa-key"></i> Send Key
+                                        <i class="fas fa-key"></i> Key
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CH-1005</td>
+                                <td>St. Mary's Catholic Church</td>
+                                <td>Takoradi</td>
+                                <td>Catholic</td>
+                                <td>+233 24 777 8910</td>
+                                <td>30 Mar 2023</td>
+                                <td><span class="status-badge status-verified">Verified</span></td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    <button class="btn btn-success btn-sm send-key" data-phone="+233247778910">
+                                        <i class="fas fa-key"></i> Key
                                     </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-            
-            <!-- Quick Actions -->
-            <div class="card-row">
-                <div class="card">
-                    <h3>Quick Actions</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Add Church
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-user-plus"></i> Add User
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-file-export"></i> Export Data
-                        </button>
-                        <button class="btn">
-                            <i class="fas fa-bell"></i> Notifications
-                        </button>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>System Status</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div>
-                            <span>SMS Service:</span>
-                            <span style="float: right; color: var(--success);"><i class="fas fa-check-circle"></i> Active</span>
-                        </div>
-                        <div>
-                            <span>Database:</span>
-                            <span style="float: right; color: var(--success);"><i class="fas fa-check-circle"></i> Connected</span>
-                        </div>
-                        <div>
-                            <span>Last Backup:</span>
-                            <span style="float: right;">Today, 02:00 AM</span>
-                        </div>
-                        <div>
-                            <span>System Version:</span>
-                            <span style="float: right;">v1.2.3</span>
-                        </div>
-                    </div>
+                
+                <!-- Pagination -->
+                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                    <nav>
+                        <ul style="display: flex; list-style: none; padding: 0; margin: 0; gap: 5px;">
+                            <li><button class="btn" disabled>Previous</button></li>
+                            <li><button class="btn" style="background-color: var(--primary); color: white;">1</button></li>
+                            <li><button class="btn">2</button></li>
+                            <li><button class="btn">3</button></li>
+                            <li><button class="btn">Next</button></li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -431,6 +470,22 @@
                     this.innerHTML = '<i class="fas fa-check"></i> Sent';
                     this.style.backgroundColor = '#6c757d';
                     this.disabled = true;
+                }
+            });
+        });
+
+        // Filter functionality
+        document.getElementById('status-filter').addEventListener('change', function() {
+            const status = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const rowStatus = row.querySelector('.status-badge').textContent.toLowerCase();
+                
+                if (status === 'all' || rowStatus.includes(status)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
             });
         });
