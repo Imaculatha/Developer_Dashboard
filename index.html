@@ -317,55 +317,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Grace Community Church</td>
-                                <td>Accra, Ghana</td>
-                                <td>+233 24 123 4567</td>
-                                <td>grace@example.com</td>
-                                <td><span class="status-badge status-verified">Verified</span></td>
-                                <td>
-                                    <button class="btn btn-success btn-sm send-key" data-phone="+233241234567">
-                                        <i class="fas fa-key"></i> Send Key
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>New Life Fellowship</td>
-                                <td>Kumasi, Ghana</td>
-                                <td>+233 54 987 6543</td>
-                                <td>newlife@example.com</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                                <td>
-                                    <button class="btn btn-success btn-sm send-key" data-phone="+233549876543">
-                                        <i class="fas fa-key"></i> Send Key
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Holy Trinity Cathedral</td>
-                                <td>Cape Coast</td>
-                                <td>+233 20 555 1234</td>
-                                <td>holytrinity@example.com</td>
-                                <td><span class="status-badge status-verified">Verified</span></td>
-                                <td>
-                                    <button class="btn btn-success btn-sm send-key" data-phone="+233205551234">
-                                        <i class="fas fa-key"></i> Send Key
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Redeemed Gospel Church</td>
-                                <td>Tema</td>
-                                <td>+233 27 888 4567</td>
-                                <td>redeemed@example.com</td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                                <td>
-                                    <button class="btn btn-success btn-sm send-key" data-phone="+233278884567">
-                                        <i class="fas fa-key"></i> Send Key
-                                    </button>
-                                </td>
-                            </tr>
+                        <tbody id="recent-registrations-body">
+                            <!-- Will be populated by JS -->
                         </tbody>
                     </table>
                 </div>
@@ -416,24 +369,76 @@
     </div>
 
     <script>
+        // Populate stats cards from API
+        fetch('http://localhost:8080/devdash/stats')
+            .then(res => res.json())
+            .then(stats => {
+                // Total Churches
+                document.querySelector('.card-row .card:nth-child(1) p').textContent = stats.totalParishes;
+                // Verified Churches
+                document.querySelector('.card-row .card:nth-child(2) p').textContent = stats.verifiedParishes;
+                // Pending Verification
+                document.querySelector('.card-row .card:nth-child(3) p').textContent = stats.pendingAdminVerifications;
+                // Active Users (show total users)
+                document.querySelector('.card-row .card:nth-child(4) p').textContent = stats.totalUsers;
+            });
+
         // Sample JavaScript for sending verification keys
         document.querySelectorAll('.send-key').forEach(button => {
             button.addEventListener('click', function() {
                 const phoneNumber = this.getAttribute('data-phone');
                 if(confirm(`Send verification key to ${phoneNumber}?`)) {
-                    // Here you would typically make an AJAX call to your backend
-                    // to actually send the SMS with the verification key
-                    
-                    // For demo purposes, we'll just show an alert
                     alert(`Verification key sent to ${phoneNumber}`);
-                    
-                    // You could also update the UI to show it was sent
                     this.innerHTML = '<i class="fas fa-check"></i> Sent';
                     this.style.backgroundColor = '#6c757d';
                     this.disabled = true;
                 }
             });
         });
+
+        // Fetch and display top 4 most recent church registrations
+        fetch('http://localhost:8080/keys?status=ALL&dateFilterType=ALL')
+            .then(res => res.json())
+            .then(data => {
+                // Sort by registration date descending
+                data.sort((a, b) => new Date(b.keyCreatedAt) - new Date(a.keyCreatedAt));
+                const top4 = data.slice(0, 4);
+                const tbody = document.getElementById('recent-registrations-body');
+                tbody.innerHTML = '';
+                top4.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.parishName}</td>
+                        <td>${item.parishLocation}</td>
+                        <td>${item.email}</td>
+                        <td>${item.email}</td>
+                        <td>
+                            <span class="status-badge status-${item.verificationStatus.toLowerCase()}">
+                                ${item.verificationStatus.charAt(0) + item.verificationStatus.slice(1).toLowerCase()}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-success btn-sm send-key" data-email="${item.email}">
+                                <i class="fas fa-key"></i> Send Key
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Attach send-key event listeners for new buttons
+                tbody.querySelectorAll('.send-key').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const email = this.getAttribute('data-email');
+                        if(confirm(`Send verification key to ${email}?`)) {
+                            alert(`Verification key sent to ${email}`);
+                            this.innerHTML = '<i class="fas fa-check"></i> Sent';
+                            this.style.backgroundColor = '#6c757d';
+                            this.disabled = true;
+                        }
+                    });
+                });
+            });
     </script>
 </body>
 </html>
