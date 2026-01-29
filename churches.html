@@ -452,7 +452,7 @@
         const fromDate = document.getElementById("from-date")?.value;
         const toDate = document.getElementById("to-date")?.value;
 
-        let url = "http://localhost:8080/keys?";
+        let url = "http://76.13.14.56/api/keys?";
         // Status
         url += `status=${statusVal}&`;
 
@@ -534,7 +534,7 @@
                   this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                   this.style.backgroundColor = "#6c757d";
 
-                  fetch(`http://localhost:8080/devdash/send-key/${keyId}`, {
+                  fetch(`http://76.13.14.56/api/devdash/send-key/${keyId}`, {
                     method: "GET"
                   })
                     .then(res => {
